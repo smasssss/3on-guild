@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+<!-- 팔콘 퀘스트 — 게임 원본 그림이 없어 직접 그렸다(나는 새 표시).
+     ⚠ 어두운 바탕("내일 준비")에 쓰지만 밝은 데서도 보이게 어두운 테를 먼저 깔고 밝은 획을 얹는다.
+     ⚠ 작게 그려지는 자리(1.3em)라 잔무늬는 뭉갠다 — 획 둘로만 그린다. -->
+<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M2.4 16.4C5.2 8.2 9.6 7.4 12 13.4C14.4 7.4 18.8 8.2 21.6 16.4" stroke="#25382C" stroke-width="5.2"/>
+<path d="M2.4 16.4C5.2 8.2 9.6 7.4 12 13.4C14.4 7.4 18.8 8.2 21.6 16.4" stroke="#EDF2EC" stroke-width="2.7"/>
+</g>
+</svg>
