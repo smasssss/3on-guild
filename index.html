@@ -45,14 +45,13 @@
     </section>
 
     <section id="panel-admin" class="panel-section" role="tabpanel" aria-labelledby="tab-admin" hidden>
-      <div class="section-intro card"><span class="kicker">관리자</span><h2>길드원 성장추적</h2></div>
       <form id="login-form" class="card login-card">
         <label for="admin-password">영문, 특수문자, 숫자조합 12자리를 입력하세요</label>
         <div class="login-row"><input id="admin-password" type="password" autocomplete="current-password" required><button type="submit" class="primary-button">로그인</button></div>
         <p id="login-error" class="error" role="alert" hidden>비밀번호가 올바르지 않습니다.</p>
       </form>
       <div id="admin-content" hidden>
-        <iframe id="growth-frame" title="3ON 길드원 성장추적" sandbox="allow-scripts allow-same-origin" hidden></iframe>
+        <iframe id="growth-frame" title="관리자 콘텐츠" sandbox="allow-scripts allow-same-origin" hidden></iframe>
       </div>
     </section>
   </main>
