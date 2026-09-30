@@ -7,6 +7,7 @@
   const tabNames = ['guide','war','hero','admin'];
 
   function showTab(name) {
+    if (name !== 'admin') lockAdmin();
     for (const tabName of tabNames) {
       const chosen = name === tabName;
       const button = $(`#tab-${tabName}`);
@@ -78,12 +79,22 @@
 
   // 평문 대신 사전 계산된 SHA-256 다이제스트를 비교합니다. 정적 페이지이므로 인증 경계가 아닙니다.
   const digest = 'a91b21e23dd3b8cef04eff46433de003fb9380c11069b29c1c2dea23554e6536';
-  const sessionKey = '3on-admin-unlocked';
+  let adminUnlocked = false;
+  function lockAdmin() {
+    adminUnlocked = false;
+    $('#admin-password').value = '';
+    $('#login-error').hidden = true;
+    $('#login-form').hidden = false;
+    $('#admin-content').hidden = true;
+    const frame = $('#growth-frame');
+    frame.removeAttribute('src');
+    frame.hidden = true;
+    growthLoaded = false;
+  }
   function refreshAdmin() {
-    const unlocked = sessionStorage.getItem(sessionKey) === digest;
-    $('#login-form').hidden = unlocked;
-    $('#admin-content').hidden = !unlocked;
-    if (unlocked) loadBundledGrowth();
+    $('#login-form').hidden = adminUnlocked;
+    $('#admin-content').hidden = !adminUnlocked;
+    if (adminUnlocked) loadBundledGrowth();
   }
   $('#login-form').addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -91,7 +102,7 @@
     const bytes = new TextEncoder().encode(value);
     const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(b=>b.toString(16).padStart(2,'0')).join('');
     if (hash === digest) {
-      sessionStorage.setItem(sessionKey,digest);
+      adminUnlocked = true;
       $('#admin-password').value = '';
       $('#login-error').hidden = true;
       refreshAdmin();
@@ -118,3 +129,4 @@
     growthLoaded=true;
   }
 })();
+
