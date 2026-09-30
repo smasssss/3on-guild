@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08111b">
+  <title>#295서버 3ON 교권보호국</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="data/guide-data.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="site-header">
+      <div class="eyebrow"><span class="guild-mark">3ON</span> 교권보호국 · 서버 #295</div>
+      <h1>라스트어사일럼 #295서버 3ON 교권보호국</h1>
+    </header>
+    <nav class="tabs" aria-label="메인 메뉴" role="tablist">
+      <button type="button" class="tab active" role="tab" aria-selected="true" aria-controls="panel-guide" id="tab-guide" data-tab="guide">공략사진</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" aria-controls="panel-war" id="tab-war" data-tab="war">길드전x서배</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" aria-controls="panel-hero" id="tab-hero" data-tab="hero">영웅가이드</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" aria-controls="panel-admin" id="tab-admin" data-tab="admin">관리자페이지</button>
+    </nav>
+
+    <section id="panel-guide" class="panel-section" role="tabpanel" aria-labelledby="tab-guide">
+      <div class="section-intro card"><span class="kicker">길드원 공개</span><h2>공략사진</h2><p>사진을 누르면 크게 볼 수 있습니다.</p></div>
+      <div id="guide-grid" class="guide-grid" aria-label="공략사진 30장"></div>
+    </section>
+
+    <section id="panel-war" class="panel-section" role="tabpanel" aria-labelledby="tab-war" hidden>
+      <div class="section-intro card"><span class="kicker">서바이벌 배틀 · 길드전</span><h2>길드전x서배</h2><p class="credit">Nopay님 지원</p></div>
+      <div class="toolbar card"><label for="day-select">요일 선택</label><select id="day-select"></select><span id="day-label" class="muted"></span></div>
+      <div id="war-summary" class="summary-grid"></div>
+      <div class="card all-day"><h3>항상 가능한 점수</h3><p>다이아 포함 패키지 구매 <strong>1다이아 +30</strong></p><div class="all-day-items"><span>UR 마차 <strong>+220,000</strong></span><span>UR 비밀작전 <strong>+165,000</strong></span><span>생존자 모집 <strong>+3,375</strong></span></div></div>
+      <div id="war-timeline" class="timeline"></div>
+      <div class="war-tips"><article class="card"><h3>오늘의 팁</h3><p id="tip-today"></p></article><article class="card"><h3>내일 준비</h3><p id="tip-tomorrow"></p></article></div>
+      <p class="source-note">자료 기준: <a href="https://duhdi.life/butler-dev/la252.html" target="_blank" rel="noopener noreferrer">Nopay님 시간표</a> · 2026-09-30 확인</p>
+    </section>
+
+    <section id="panel-hero" class="panel-section" role="tabpanel" aria-labelledby="tab-hero" hidden>
+      <div class="section-intro card"><span class="kicker">영웅 교양서</span><h2>영웅가이드</h2><p class="credit">Nopay님 지원</p></div>
+      <div id="hero-types" class="subtabs" role="tablist" aria-label="영웅 갈래"></div>
+      <div id="hero-content"></div>
+      <p class="source-note">자료 기준: <a href="https://duhdi.life/butler-dev/battle-guide-draft.html" target="_blank" rel="noopener noreferrer">Nopay님 영웅 교양서</a> · 2026-09-30 확인</p>
+    </section>
+
+    <section id="panel-admin" class="panel-section" role="tabpanel" aria-labelledby="tab-admin" hidden>
+      <div class="section-intro card"><span class="kicker">관리자</span><h2>길드원 성장추적</h2></div>
+      <form id="login-form" class="card login-card">
+        <label for="admin-password">영문, 특수문자, 숫자조합 12자리를 입력하세요</label>
+        <div class="login-row"><input id="admin-password" type="password" autocomplete="current-password" required><button type="submit" class="primary-button">로그인</button></div>
+        <p id="login-error" class="error" role="alert" hidden>비밀번호가 올바르지 않습니다.</p>
+      </form>
+      <div id="admin-content" hidden>
+        <iframe id="growth-frame" title="3ON 길드원 성장추적" sandbox="allow-scripts allow-same-origin" hidden></iframe>
+      </div>
+    </section>
+  </main>
+  <dialog id="lightbox" aria-label="공략사진 크게 보기"><button type="button" id="lightbox-close" aria-label="닫기">×</button><img id="lightbox-image" alt="확대한 공략사진"><div class="lightbox-controls"><button type="button" id="lightbox-prev" aria-label="이전 사진">‹</button><span id="lightbox-count"></span><button type="button" id="lightbox-next" aria-label="다음 사진">›</button></div></dialog>
+</body>
+</html>
