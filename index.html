@@ -87,7 +87,10 @@
 #exitToast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,18px);z-index:9999;max-width:min(92vw,520px);padding:12px 16px;border-radius:12px;background:rgba(20,31,45,.96);border:1px solid #55718c;color:#fff;font-size:13px;font-weight:800;line-height:1.45;text-align:center;box-shadow:0 12px 38px #0008;opacity:0;pointer-events:none;transition:opacity .16s ease,transform .16s ease}
 #exitToast.show{opacity:1;transform:translate(-50%,0)}
 </style>
-<style>.split{grid-template-columns:minmax(0,1fr)}.split>.card{min-width:0;width:100%}.field{min-width:0}.vip-main b{overflow-wrap:anywhere}.viprow{min-width:0}.day .state{overflow-wrap:anywhere}</style><style>#appNotice{display:none;position:fixed;left:50%;bottom:20px;transform:translateX(-50%);width:min(92vw,520px);z-index:250;background:#172a40;box-shadow:0 8px 30px #0009}#appNotice.show{display:block}#appNotice .actions{justify-content:flex-end}#confirmModal{z-index:240}#confirmMessage{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}</style></head>
+<style>.split{grid-template-columns:minmax(0,1fr)}.split>.card{min-width:0;width:100%}.field{min-width:0}.vip-main b{overflow-wrap:anywhere}.viprow{min-width:0}.day .state{overflow-wrap:anywhere}</style><style>#appNotice{display:none;position:fixed;left:50%;bottom:20px;transform:translateX(-50%);width:min(92vw,520px);z-index:250;background:#172a40;box-shadow:0 8px 30px #0009}#appNotice.show{display:block}#appNotice .actions{justify-content:flex-end}#confirmModal{z-index:240}#confirmMessage{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}</style><style>#canyon [hidden],#canyonDataModal [hidden]{display:none!important}
+.canyon-toolbar{max-width:300px;margin:16px 0}.canyon-line{display:grid;grid-template-columns:58px minmax(0,1fr) 125px 55px;gap:10px;align-items:center;min-width:0}.canyon-head{color:var(--muted);font-size:11px;padding:10px}.canyon-entry{background:#0e1927;border:1px solid #294158;border-radius:11px;margin:7px 0;overflow:hidden}.canyon-entry .canyon-line{padding:12px 10px;font-size:13px}.canyon-rank{font-size:11px;font-weight:800;white-space:nowrap}.canyon-name{font-weight:900;overflow-wrap:anywhere;line-height:1.4}.canyon-power{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:800}.canyon-head span:nth-child(3){text-align:right}.canyon-memo{padding:10px 12px;border-top:1px solid #294158;color:#d8e1eb;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.6}.canyon-empty{padding:35px 12px;text-align:center;color:var(--muted);line-height:1.8;font-size:13px}.canyon-entry .smallbtn{min-height:36px;padding:7px 8px}.canyon-gold{color:#ffd06d}.canyon-silver{color:#d4dfec}.canyon-bronze{color:#d8ad86}#canyon>details summary{font-size:13px;font-weight:800;cursor:pointer}#canyonMemoModal,#canyonDataModal{z-index:180}#canyonMemoInput{max-height:45vh}#canyonWarning{margin:10px 0}
+@media(max-width:430px){.canyon-line{grid-template-columns:36px minmax(0,1fr) 98px 44px;gap:6px}.canyon-entry .canyon-line{padding:10px 7px;font-size:11px}.canyon-head{padding:8px 7px;font-size:10px}.canyon-rank{font-size:10px}.canyon-entry .smallbtn{font-size:10px;padding:6px}.canyon-memo{font-size:11px}.canyon-rank .medal{display:none}}
+</style></head>
 <body>
 <div class="login hide" id="loginGate">
   <div class="login-card">
@@ -106,7 +109,7 @@
 <div class="wrap">
 <div class="brand"><span class="logo">3ON</span><b>교권보호국 · 서버 #295</b></div>
 <div class="hero"><h1>3ON 운영센터</h1><p>길드원 성장추적과 마차장/VIP 운영기록을 한 곳에서 관리합니다.</p><div class="proto"><b>운영 안내</b> · 마차관리와 VIP 운영기록은 이 브라우저에 저장됩니다. 다른 기기로 옮길 때는 관리설정에서 백업·병합하세요.</div></div>
-<div class="tabs"><button class="active" data-tab="growth">성장추적</button><button data-tab="carriage">마차관리</button><button data-tab="history">운영이력</button><button data-tab="settings">관리설정</button></div>
+<div class="tabs"><button class="active" data-tab="growth">성장추적</button><button data-tab="canyon">협곡대전 1소대</button><button data-tab="carriage">마차관리</button><button data-tab="history">운영이력</button><button data-tab="settings">관리설정</button></div>
 <section class="page" id="carriage">
 <div class="kpis" id="mainKpis"></div>
 <div class="split">
@@ -117,6 +120,35 @@
 <div class="rotations"><div class="card"><h3>기본 로테이션</h3><div class="sub">주차가 바뀌어도 기본 순서는 계속 이어집니다.</div><div class="route" id="baseRoute"></div></div><div class="card"><h3>중간투입 후보</h3><div class="sub">필요할 때 기본 순번 사이에 넣어 사용합니다.</div><div class="route" id="insertRoute"></div></div></div>
 <div class="card person-card" id="selectedMemberCard"></div>
 </section>
+<section class="page" id="canyon">
+  <div class="card">
+    <h2>협곡대전 1소대</h2>
+    <div class="sub">목요일 1소대 자료의 투력으로 순위를 표시합니다. 메모는 주차가 바뀌어도 유지됩니다.</div>
+    <div class="canyon-toolbar field"><label for="canyonWeek">목요일 자료</label><select id="canyonWeek"></select></div>
+    <div class="notice" id="canyonWarning" hidden></div>
+    <div class="notice" id="canyonExample" hidden>예시 데이터 · 기능 검수 전용 · 실제 1소대 자료가 아닙니다.</div>
+    <div class="canyon-head canyon-line" aria-hidden="true"><span>순위</span><span>닉네임</span><span>투력</span><span>메모</span></div>
+    <div id="canyonRows" aria-live="polite"></div>
+    <div class="sub">메모와 주차 자료는 이 브라우저에 저장됩니다. 기기를 옮길 때는 아래 백업·병합을 이용하세요.</div>
+  </div>
+  <details class="card"><summary>1소대 자료 관리</summary>
+    <div class="sub">스크린샷에서 확인한 닉네임·투력만 등록합니다. 일반 성장추적 투력은 가져오지 않습니다. 자료 등록과 메모 변경에는 관리자 인증이 필요합니다.</div>
+    <div class="actions"><button class="btn ghost" id="canyonAddWeek">목요일 자료 등록</button><button class="btn ghost" id="canyonExportPower">주차 자료 백업</button><button class="btn ghost" id="canyonExportMemos">메모 백업</button><button class="btn ghost" id="canyonImport">백업 병합</button></div>
+    <div class="actions"><button class="smallbtn" id="canyonRestorePower">직전 주차 자료 복구</button><button class="smallbtn" id="canyonRestoreMemos">직전 메모 복구</button></div>
+    <div class="sub">변경 전 자료는 자동 백업합니다. 기존 마차/VIP 저장자료는 변경하지 않습니다.</div>
+  </details>
+</section>
+<div id="canyonMemoModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="canyonMemoTitle"><div class="modal-card">
+  <h3 id="canyonMemoTitle">길드원 메모</h3><div class="field" style="margin-top:12px"><label for="canyonMemoInput">메모 · 모든 주차에 공통으로 표시</label><textarea id="canyonMemoInput" maxlength="10000" rows="6"></textarea></div>
+  <div class="sub">빈 내용으로 확인하면 메모를 삭제합니다.</div><div class="login-actions"><button class="btn ghost" id="canyonMemoCancel">취소</button><button class="btn primary" id="canyonMemoSave">확인</button></div>
+</div></div>
+<div id="canyonDataModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="canyonDataTitle"><div class="modal-card">
+  <h3 id="canyonDataTitle">목요일 자료 등록</h3>
+  <div id="canyonWeekFields" class="field" style="margin-top:12px"><label for="canyonDate">자료 날짜 · 목요일</label><input id="canyonDate" type="date"><label for="canyonPowerInput">한 줄에 닉네임 | 투력</label><textarea id="canyonPowerInput" rows="8" placeholder="스크린샷에서 확인한 자료를 입력하세요"></textarea><div class="sub">투력의 쉼표는 허용합니다. 닉네임은 확인된 변경정보만 연결하며, 미등록 닉네임은 별도 인물로 보존합니다.</div></div>
+  <div id="canyonBackupFields" class="field" style="margin-top:12px" hidden><label for="canyonRestoreMode">복구 방식</label><select id="canyonRestoreMode"><option value="merge">병합 · 기존 자료 보존</option><option value="replace">전체 복구 · 이 백업의 해당 자료로 교체</option></select><label for="canyonBackupInput">백업 JSON 내용을 붙여 넣으세요</label><textarea id="canyonBackupInput" rows="10"></textarea><div class="sub">병합은 기존 주차와 충돌하면 저장하지 않습니다. 메모는 더 최근 수정본만 적용합니다. 전체 복구는 주차 또는 메모 중 선택한 백업 종류만 교체하며 변경 전 자료를 자동 백업합니다.</div></div>
+  <div class="login-actions"><button class="btn ghost" id="canyonDataCancel">취소</button><button class="btn primary" id="canyonDataSave">확인</button></div>
+</div></div>
+
 <section class="page active" id="growth">
   <div class="growth-frame-wrap">
     <iframe id="growthFrame" title="3ON 길드원 성장추적"></iframe>
@@ -211,13 +243,13 @@ function initLogin(){
     if(v==='2953'){
       sessionStorage.setItem('3on_admin_ok','1');
       hideAdminGate();
-      activateTab('settings',pendingAdminPush);
+      if(canyonPendingAction){const action=canyonPendingAction;canyonPendingAction=null;activateTab('canyon',false);action();}else activateTab('settings',pendingAdminPush);
     }else{
       document.getElementById('loginerr').textContent='비밀번호가 올바르지 않습니다.';
     }
   };
   document.getElementById('loginBtn').onclick=submit;
-  document.getElementById('loginCancel').onclick=async()=>{hideAdminGate();if(typeof clearExitWarning==='function')clearExitWarning();};
+  document.getElementById('loginCancel').onclick=async()=>{canyonPendingAction=null;hideAdminGate();if(typeof clearExitWarning==='function')clearExitWarning();};
   document.getElementById('pw').addEventListener('keydown',e=>{
     if(e.key==='Enter')submit();
 
@@ -283,7 +315,7 @@ function snapshot(label){const m=memberByLabel(label);return m?{rank:m.rank,leve
 function canonicalOf(label){const m=memberByLabel(label);return m?m.name:(aliases[label]||label)}
 function rebuildPointer(){let p=0;const bases=state.records.filter(r=>r.type==='base').sort((a,b)=>a.date.localeCompare(b.date)||a.createdAt-b.createdAt);for(const r of bases){const idx=baseRotation.indexOf(r.leader);if(idx>=0)p=(idx+1)%baseRotation.length}state.pointer=p}
 let currentTab='growth';
-const validTabs=['carriage','growth','history','settings'];
+const validTabs=['growth','canyon','carriage','history','settings'];
 function activateTab(tab,push=false){
   if(!validTabs.includes(tab))tab='growth';
   if(push && typeof clearExitWarning==='function')clearExitWarning();
@@ -541,7 +573,7 @@ function bindProduction(){
     if(e.key!=='Escape')return;
     e.preventDefault();
     if(confirmResolver)finishConfirm(false);
-    else if(!document.getElementById('loginGate').classList.contains('hide'))hideAdminGate();
+    else if(!document.getElementById('loginGate').classList.contains('hide')){canyonPendingAction=null;hideAdminGate();}
     else history.back();
   });
 }
@@ -575,8 +607,9 @@ function initAppHistory(){
   });
   window.addEventListener('popstate',e=>{
     if(confirmResolver){finishConfirm(false);history.forward();return;}
-    if(!document.getElementById('loginGate').classList.contains('hide')){hideAdminGate();try{history.forward()}catch(err){}return;}
+    if(!document.getElementById('loginGate').classList.contains('hide')){canyonPendingAction=null;hideAdminGate();try{history.forward()}catch(err){}return;}
     document.getElementById('vipModal').classList.toggle('show',e.state?.modal==='vip');
+    for(const id of ['canyonMemoModal','canyonDataModal'])document.getElementById(id).classList.toggle('show',e.state?.modal===id);
     const st=e.state;
     if(st?.app3on&&st.root){
       if(exitArmed){clearExitWarning();setTimeout(()=>history.back(),0);}
@@ -616,6 +649,168 @@ function bindPageDialogs(){
   document.getElementById('noticeClose').onclick=()=>document.getElementById('appNotice').classList.remove('show');
 }
 
-bindPageDialogs();initLogin();initGrowthFrame();initAppHistory();bind();bindVipMaintenance();bindProduction();renderAll();
+// Independent datasets: release updates never seed or overwrite administrator memos.
+const CANYON_POWER_SEED={version:1,weeks:[]};
+const CANYON_KEYS={power:'3on_canyon_power',memos:'3on_canyon_memos'};
+let canyonSelectedDate='',canyonMemoMember=null,canyonDataMode='week',canyonPendingAction=null;
+const canyonStores={};
+function canyonIdentity(nickname){
+  const nick=String(nickname).trim();
+  const canonical=Object.prototype.hasOwnProperty.call(VERIFIED_IDENTITIES,nick)?VERIFIED_IDENTITIES[nick]:nick;
+  const known=GROWTH.members.some(m=>m.name===canonical||labelOfMember(m)===nick);
+  return (known||Object.prototype.hasOwnProperty.call(VERIFIED_IDENTITIES,nick)?'guild:':'unverified:')+canonical;
+}
+function canyonValidDate(date){return /^\d{4}-\d{2}-\d{2}$/.test(date)&&iso(parseISO(date))===date&&parseISO(date).getDay()===4;}
+function canyonValidate(kind,data){
+  if(!data||data.version!==1)throw Error('지원하지 않는 자료 형식입니다.');
+  if(kind==='power'){
+    if(!Array.isArray(data.weeks)||data.weeks.length>2000)throw Error('주차 자료를 확인하세요.');
+    const dates=new Set();
+    for(const week of data.weeks){
+      if(!canyonValidDate(week.date)||dates.has(week.date)||!Array.isArray(week.members)||week.members.length>500)throw Error('목요일 날짜 또는 중복 주차를 확인하세요.');
+      if(week.isExample!==undefined&&typeof week.isExample!=='boolean')throw Error('예시 자료 표시를 확인하세요.');
+      dates.add(week.date);const ids=new Set();
+      for(const m of week.members){
+        if(!m||typeof m.id!=='string'||! /^(guild:|unverified:).+/.test(m.id)||m.id.length>200||typeof m.nickname!=='string'||!m.nickname.trim()||m.nickname.length>100||!Number.isSafeInteger(m.power)||m.power<0||ids.has(m.id))throw Error('닉네임·투력 또는 중복 인원을 확인하세요.');
+        ids.add(m.id);
+      }
+      const sorted=[...week.members].sort((a,b)=>b.power-a.power||a.nickname.localeCompare(b.nickname,'ko'));
+      week.members=sorted.map((m,i)=>({...m,rank:i+1}));
+    }
+    data.weeks.sort((a,b)=>b.date.localeCompare(a.date));
+  }else{
+    if(!data.members||Array.isArray(data.members)||typeof data.members!=='object')throw Error('메모 자료를 확인하세요.');
+    for(const [id,m] of Object.entries(data.members)){
+      if(!/^(guild:|unverified:).+/.test(id)||id.length>200||!m||typeof m.text!=='string'||m.text.length>10000||typeof m.updatedAt!=='string'||!Number.isFinite(Date.parse(m.updatedAt)))throw Error('메모 내용이나 수정일을 확인하세요.');
+    }
+  }
+  return data;
+}
+function canyonLoad(kind){
+  const store={raw:null,data:kind==='power'?{version:1,weeks:[]}:{version:1,members:{}},error:''};
+  try{store.raw=localStorage.getItem(CANYON_KEYS[kind]);if(store.raw!==null)store.data=canyonValidate(kind,JSON.parse(store.raw));}
+  catch(e){store.error='저장자료를 읽지 못했습니다. 기존 원본을 유지하며 변경을 차단합니다. '+e.message;}
+  if(kind==='power'&&!store.error){
+    const seed=canyonValidate('power',JSON.parse(JSON.stringify(CANYON_POWER_SEED)));
+    for(const w of seed.weeks)if(!store.data.weeks.some(x=>x.date===w.date))store.data.weeks.push(w);
+    canyonValidate('power',store.data);
+  }
+  return store;
+}
+function canyonWrite(kind,candidate){
+  const store=canyonStores[kind],key=CANYON_KEYS[kind];
+  if(store.error)throw Error(store.error);
+  const validated=canyonValidate(kind,JSON.parse(JSON.stringify(candidate)));
+  if(localStorage.getItem(key)!==store.raw)throw Error('다른 창에서 자료가 변경되었습니다. 새로고침한 뒤 다시 확인하세요.');
+  // Backup is required before mutation. If storage is full, the live dataset stays unchanged.
+  localStorage.setItem(key+'_backup',JSON.stringify({format:'3on-canyon-raw-v1',kind,savedAt:new Date().toISOString(),raw:store.raw}));
+  const raw=JSON.stringify(validated);localStorage.setItem(key,raw);store.raw=raw;store.data=validated;
+}
+function canyonMemo(id){return canyonStores.memos.data.members[id]?.text||'';}
+function canyonDisplay(m){return m.id.startsWith('guild:')?currentLabel(m.id.slice(6)):m.nickname;}
+function canyonDelta(date,id){
+  const weeks=canyonStores.power.data.weeks,index=weeks.findIndex(w=>w.date===date);
+  const now=weeks[index]?.members.find(m=>m.id===id),previous=weeks[index+1]?.members.find(m=>m.id===id);
+  return now&&previous?now.power-previous.power:null;
+}
+function renderCanyon(){
+  const weeks=canyonStores.power.data.weeks,select=document.getElementById('canyonWeek');
+  if(!weeks.some(w=>w.date===canyonSelectedDate))canyonSelectedDate=weeks[0]?.date||'';
+  select.innerHTML=weeks.length?weeks.map(w=>`<option value="${w.date}">${w.date} · ${w.members.length}명</option>`).join(''):'<option value="">등록된 목요일 자료 없음</option>';
+  select.value=canyonSelectedDate;select.disabled=!weeks.length;
+  const errors=Object.values(canyonStores).map(s=>s.error).filter(Boolean),warning=document.getElementById('canyonWarning');warning.hidden=!errors.length;warning.textContent=errors.join('\n');
+  const week=weeks.find(w=>w.date===canyonSelectedDate),rows=document.getElementById('canyonRows');
+  document.getElementById('canyonExample').hidden=!week?.isExample;
+  if(!week?.members.length){rows.innerHTML='<div class="canyon-empty">아직 등록된 1소대 자료가 없습니다.<br>목요일 스크린샷을 제공하면 해당 날짜의 명단과 투력을 반영합니다.</div>';return;}
+  rows.innerHTML=week.members.map((m,i)=>{
+    const memo=canyonMemo(m.id),color=['canyon-gold','canyon-silver','canyon-bronze'][i]||'';
+    return `<article class="canyon-entry"><div class="canyon-line"><span class="canyon-rank ${color}">${i<3?'<span class="medal">'+['🥇','🥈','🥉'][i]+' </span>':''}${m.rank}위</span><span class="canyon-name">${escapeLabel(canyonDisplay(m))}</span><span class="canyon-power">${m.power.toLocaleString('ko-KR')}</span><button class="smallbtn" data-canyon-memo="${i}" aria-label="${escapeLabel(canyonDisplay(m))} 메모">메모</button></div>${memo?`<div class="canyon-memo"><b>메모:</b> ${escapeLabel(memo)}</div>`:''}</article>`;
+  }).join('');
+}
+function canyonRequireAdmin(action){
+  if(adminOK()){action();return;}
+  canyonPendingAction=action;showAdminGate(false);
+}
+function canyonOpenModal(id){clearExitWarning();history.pushState({app3on:true,tab:'canyon',modal:id,growthTab:growthView},'','#canyon');document.getElementById(id).classList.add('show');}
+function canyonCloseModal(id){document.getElementById(id).classList.remove('show');if(history.state?.modal===id)history.back();}
+function canyonOpenMemo(member){
+  canyonMemoMember=member;document.getElementById('canyonMemoTitle').textContent=canyonDisplay(member)+' · 메모';document.getElementById('canyonMemoInput').value=canyonMemo(member.id);
+  canyonOpenModal('canyonMemoModal');document.getElementById('canyonMemoInput').focus();
+}
+function canyonParseRows(date,text){
+  if(!canyonValidDate(date))throw Error('실제 목요일 날짜를 선택해 주세요.');
+  const lines=text.split(/\r?\n/).filter(x=>x.trim());if(!lines.length)throw Error('확인한 닉네임과 투력을 입력해 주세요.');
+  const members=lines.map((line,i)=>{
+    const parts=line.split(/\s*\|\s*|\t/);if(parts.length!==2)throw Error((i+1)+'번째 줄을 닉네임 | 투력 형식으로 입력하세요.');
+    const nickname=parts[0].trim(),number=parts[1].trim();if(!/^(\d+|\d{1,3}(,\d{3})+)$/.test(number))throw Error((i+1)+'번째 줄 투력은 정수로 입력하세요.');
+    return {id:canyonIdentity(nickname),nickname,power:Number(number.replaceAll(',',''))};
+  });
+  return canyonValidate('power',{version:1,weeks:[{date,members,updatedAt:new Date().toISOString(),source:'목요일 1소대 확인 자료'}]}).weeks[0];
+}
+function canyonMerge(kind,incoming){
+  const next=JSON.parse(JSON.stringify(canyonStores[kind].data));canyonValidate(kind,incoming);
+  if(kind==='power')for(const w of incoming.weeks){
+    const old=next.weeks.find(x=>x.date===w.date);
+    if(old&&JSON.stringify(old.members)!==JSON.stringify(w.members))throw Error(w.date+' 주차가 기존 자료와 다릅니다. 기존 자료를 보존했습니다. 수정이 필요하면 목요일 자료 등록에서 확인하세요.');
+    if(!old)next.weeks.push(w);
+  }else for(const [id,m] of Object.entries(incoming.members)){
+    const old=next.members[id];
+    if(old&&Date.parse(old.updatedAt)===Date.parse(m.updatedAt)&&old.text!==m.text)throw Error('같은 수정일의 메모 내용이 다릅니다. 기존 메모를 보존했습니다.');
+    if(!old||Date.parse(m.updatedAt)>Date.parse(old.updatedAt))next.members[id]=m;
+  }
+  return canyonValidate(kind,next);
+}
+function canyonExport(kind){
+  const store=canyonStores[kind];if(store.error){showNotice(store.error);return;}
+  const blob=new Blob([JSON.stringify({format:'3on-canyon-backup-v1',kind,exportedAt:new Date().toISOString(),data:store.data},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='3ON_협곡대전_'+kind+'_'+iso(new Date())+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function canyonRestore(kind){
+  try{
+    const backup=JSON.parse(localStorage.getItem(CANYON_KEYS[kind]+'_backup')||'null');
+    if(!backup||backup.format!=='3on-canyon-raw-v1'||backup.kind!==kind)throw Error('직전 자동 백업이 없습니다.');
+    const candidate=backup.raw===null?(kind==='power'?{version:1,weeks:[]}:{version:1,members:{}}):JSON.parse(backup.raw);canyonValidate(kind,candidate);
+    if(!await askConfirm((kind==='power'?'주차 자료':'메모')+'를 '+backup.savedAt+' 변경 직전 상태로 복구할까요? 현재 자료도 자동 백업됩니다.'))return;
+    if(!adminOK())return;canyonWrite(kind,candidate);canyonSelectedDate='';renderCanyon();showNotice('직전 자료로 복구했습니다.');
+  }catch(e){showNotice(e.message);}
+}
+function bindCanyon(){
+  canyonStores.power=canyonLoad('power');canyonStores.memos=canyonLoad('memos');
+  document.getElementById('canyonWeek').onchange=e=>{canyonSelectedDate=e.target.value;renderCanyon();};
+  document.getElementById('canyonRows').onclick=e=>{const b=e.target.closest('[data-canyon-memo]');if(!b)return;const member=canyonStores.power.data.weeks.find(w=>w.date===canyonSelectedDate)?.members[Number(b.dataset.canyonMemo)];if(member)canyonRequireAdmin(()=>canyonOpenMemo(member));};
+  document.getElementById('canyonMemoCancel').onclick=()=>canyonCloseModal('canyonMemoModal');
+  document.getElementById('canyonMemoSave').onclick=()=>{
+    if(!adminOK()||!canyonMemoMember)return;
+    try{const next=JSON.parse(JSON.stringify(canyonStores.memos.data));next.members[canyonMemoMember.id]={text:document.getElementById('canyonMemoInput').value.trim(),updatedAt:new Date().toISOString()};canyonWrite('memos',next);canyonCloseModal('canyonMemoModal');renderCanyon();showNotice('메모를 저장했습니다.');}catch(e){showNotice(e.message);}
+  };
+  function openData(mode){canyonDataMode=mode;document.getElementById('canyonDataTitle').textContent=mode==='week'?'목요일 자료 등록':'협곡대전 백업 병합';document.getElementById('canyonWeekFields').hidden=mode!=='week';document.getElementById('canyonBackupFields').hidden=mode==='week';document.getElementById('canyonDate').value=canyonSelectedDate;document.getElementById('canyonPowerInput').value='';document.getElementById('canyonBackupInput').value='';document.getElementById('canyonRestoreMode').value='merge';canyonOpenModal('canyonDataModal');}
+  document.getElementById('canyonAddWeek').onclick=()=>canyonRequireAdmin(()=>openData('week'));
+  document.getElementById('canyonImport').onclick=()=>canyonRequireAdmin(()=>openData('backup'));
+  document.getElementById('canyonDataCancel').onclick=()=>canyonCloseModal('canyonDataModal');
+  document.getElementById('canyonDataSave').onclick=async()=>{
+    if(!adminOK())return;
+    try{
+      let kind,next,date='';
+      if(canyonDataMode==='week'){
+        const week=canyonParseRows(document.getElementById('canyonDate').value,document.getElementById('canyonPowerInput').value);date=week.date;kind='power';
+        next=JSON.parse(JSON.stringify(canyonStores.power.data));const old=next.weeks.find(w=>w.date===date);
+        if(!await askConfirm(date+' · '+week.members.length+'명의 확인 자료를 저장할까요?'+(old?' 이 날짜의 기존 투력을 수정하며 변경 전 자료는 자동 백업합니다.':' 과거 주차와 메모는 유지됩니다.')))return;
+        next.weeks=next.weeks.filter(w=>w.date!==date);next.weeks.push(week);
+      }else{
+        const backup=JSON.parse(document.getElementById('canyonBackupInput').value);
+        if(backup.format!=='3on-canyon-backup-v1'||!['power','memos'].includes(backup.kind))throw Error('협곡대전 백업 JSON을 입력해 주세요.');
+        kind=backup.kind;const replace=document.getElementById('canyonRestoreMode').value==='replace';next=replace?canyonValidate(kind,backup.data):canyonMerge(kind,backup.data);
+        if(!await askConfirm(replace?'전체 복구: 현재 '+(kind==='power'?'협곡 주차 자료':'협곡 메모')+'를 이 백업으로 교체할까요? 백업에 없는 해당 자료는 현재 화면에서 제외됩니다. 변경 전 원본은 자동 백업합니다.':'백업을 병합할까요? 기존 주차는 보존하고 메모는 더 최근 수정본을 적용합니다. 변경 전 자료는 자동 백업합니다.'))return;
+        if(replace&&!await askConfirm('정말 해당 자료 전체를 백업 상태로 복구하시겠습니까? 마차/VIP와 다른 종류의 협곡 자료는 유지됩니다.'))return;
+      }
+      if(!adminOK())return;canyonWrite(kind,next);canyonSelectedDate=date;canyonCloseModal('canyonDataModal');renderCanyon();showNotice('협곡대전 자료를 저장했습니다.');
+    }catch(e){showNotice('저장하지 못했습니다. '+e.message);}
+  };
+  document.getElementById('canyonExportPower').onclick=()=>canyonExport('power');document.getElementById('canyonExportMemos').onclick=()=>canyonExport('memos');
+  document.getElementById('canyonRestorePower').onclick=()=>canyonRequireAdmin(()=>canyonRestore('power'));document.getElementById('canyonRestoreMemos').onclick=()=>canyonRequireAdmin(()=>canyonRestore('memos'));
+  window.addEventListener('storage',e=>{if(Object.values(CANYON_KEYS).includes(e.key)){for(const kind of ['power','memos'])canyonStores[kind]=canyonLoad(kind);renderCanyon();showNotice('다른 창에서 바뀐 협곡대전 자료를 불러왔습니다. 열린 입력창은 취소 후 다시 열어 주세요.');canyonCloseModal('canyonMemoModal');canyonCloseModal('canyonDataModal');}});
+  renderCanyon();
+}
+
+bindPageDialogs();initLogin();initGrowthFrame();initAppHistory();bind();bindVipMaintenance();bindProduction();renderAll();bindCanyon();
 </script>
 </body></html>
