@@ -650,7 +650,7 @@ function bindPageDialogs(){
 }
 
 // Independent datasets: release updates never seed or overwrite administrator memos.
-const CANYON_POWER_SEED={version:1,weeks:[]};
+const CANYON_POWER_SEED={"version":1,"weeks":[{"date":"2026-10-08","source":"사용자 제공 협곡대전 1소대 자료","members":[{"id":"guild:아일리","nickname":"아일리˚","displayName":"아일리˚","power":18868882,"rank":1},{"id":"guild:내가두려운가","nickname":"꧁ᬊ두리ᬊ꧂","displayName":"꧁ᬊ두리ᬊ꧂","power":17032994,"rank":2},{"id":"guild:으나으나1","nickname":"으나으나","displayName":"으나으나","power":15416439,"rank":3},{"id":"guild:닥종닥테닥","nickname":"닥중닥테닥","displayName":"닥중닥테닥","power":15217425,"rank":4},{"id":"guild:BelialKing","nickname":"BelialKing","displayName":"BelialKing","power":15110235,"rank":5},{"id":"guild:공 주","nickname":"공 주","displayName":"공 주","power":14803956,"rank":6},{"id":"guild:핵불잡","nickname":"핵불잙","displayName":"핵불잙","power":14601455,"rank":7},{"id":"guild:반달gh","nickname":"반달gh","displayName":"반달gh","power":14575395,"rank":8},{"id":"guild:백구김구","nickname":"백구김구","displayName":"백구김구","power":13295865,"rank":9},{"id":"guild:포도","nickname":"포도","displayName":"포도","power":13160635,"rank":10},{"id":"guild:얼음많이","nickname":"얼음많이","displayName":"얼음많이","power":12621391,"rank":11},{"id":"guild:링","nickname":"ㅤ링ㅤ","displayName":"ㅤ링ㅤ","power":12377109,"rank":12},{"id":"guild:문어치즈","nickname":"문어치즈","displayName":"문어치즈","power":12169023,"rank":13},{"id":"guild:이도동","nickname":"이도동","displayName":"이도동","power":11800000,"rank":14},{"id":"guild:눈도깜짝안한다","nickname":"눈도깜짝안한다","displayName":"눈도깜짝안한다","power":11728079,"rank":15},{"id":"guild:준이민이파파","nickname":"준이민이파파","displayName":"준이민이파파","power":11262229,"rank":16},{"id":"guild:워워","nickname":"워워","displayName":"워워","power":11200000,"rank":17},{"id":"guild:Cs2Таня","nickname":"TanyaCs","displayName":"TanyaCs","power":10924504,"rank":18},{"id":"guild:크림쿡","nickname":"크림쿜","displayName":"크림쿜","power":10776534,"rank":19},{"id":"guild:볼트트","nickname":"볼트트","displayName":"볼트트","power":9426192,"rank":20}]}]};
 const CANYON_KEYS={power:'3on_canyon_power',memos:'3on_canyon_memos'};
 let canyonSelectedDate='',canyonMemoMember=null,canyonDataMode='week',canyonPendingAction=null;
 const canyonStores={};
@@ -658,6 +658,7 @@ function canyonIdentity(nickname){
   const nick=String(nickname).trim();
   const canonical=Object.prototype.hasOwnProperty.call(VERIFIED_IDENTITIES,nick)?VERIFIED_IDENTITIES[nick]:nick;
   const known=GROWTH.members.some(m=>m.name===canonical||labelOfMember(m)===nick);
+  if(!known&&!Object.prototype.hasOwnProperty.call(VERIFIED_IDENTITIES,nick)){const confirmed=new Set(CANYON_POWER_SEED.weeks.flatMap(w=>w.members).filter(m=>m.nickname===nick).map(m=>m.id));if(confirmed.size===1)return [...confirmed][0];}
   return (known||Object.prototype.hasOwnProperty.call(VERIFIED_IDENTITIES,nick)?'guild:':'unverified:')+canonical;
 }
 function canyonValidDate(date){return /^\d{4}-\d{2}-\d{2}$/.test(date)&&iso(parseISO(date))===date&&parseISO(date).getDay()===4;}
@@ -671,7 +672,7 @@ function canyonValidate(kind,data){
       if(week.isExample!==undefined&&typeof week.isExample!=='boolean')throw Error('예시 자료 표시를 확인하세요.');
       dates.add(week.date);const ids=new Set();
       for(const m of week.members){
-        if(!m||typeof m.id!=='string'||! /^(guild:|unverified:).+/.test(m.id)||m.id.length>200||typeof m.nickname!=='string'||!m.nickname.trim()||m.nickname.length>100||!Number.isSafeInteger(m.power)||m.power<0||ids.has(m.id))throw Error('닉네임·투력 또는 중복 인원을 확인하세요.');
+        if(!m||(m.displayName!==undefined&&(typeof m.displayName!=='string'||!m.displayName.trim()||m.displayName.length>100))||typeof m.id!=='string'||! /^(guild:|unverified:).+/.test(m.id)||m.id.length>200||typeof m.nickname!=='string'||!m.nickname.trim()||m.nickname.length>100||!Number.isSafeInteger(m.power)||m.power<0||ids.has(m.id))throw Error('닉네임·투력 또는 중복 인원을 확인하세요.');
         ids.add(m.id);
       }
       const sorted=[...week.members].sort((a,b)=>b.power-a.power||a.nickname.localeCompare(b.nickname,'ko'));
@@ -707,7 +708,7 @@ function canyonWrite(kind,candidate){
   const raw=JSON.stringify(validated);localStorage.setItem(key,raw);store.raw=raw;store.data=validated;
 }
 function canyonMemo(id){return canyonStores.memos.data.members[id]?.text||'';}
-function canyonDisplay(m){return m.id.startsWith('guild:')?currentLabel(m.id.slice(6)):m.nickname;}
+function canyonDisplay(m){return m.displayName||(m.id.startsWith('guild:')?currentLabel(m.id.slice(6)):m.nickname);}
 function canyonDelta(date,id){
   const weeks=canyonStores.power.data.weeks,index=weeks.findIndex(w=>w.date===date);
   const now=weeks[index]?.members.find(m=>m.id===id),previous=weeks[index+1]?.members.find(m=>m.id===id);
@@ -814,3 +815,4 @@ function bindCanyon(){
 bindPageDialogs();initLogin();initGrowthFrame();initAppHistory();bind();bindVipMaintenance();bindProduction();renderAll();bindCanyon();
 </script>
 </body></html>
+
