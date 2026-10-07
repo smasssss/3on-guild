@@ -223,6 +223,7 @@ function showAdminGate(push=true){
 }
 function hideAdminGate(){
   adminLoginAttempt++;
+  if(!adminOK()&&currentTab==='settings')activateTab('growth',false);
   document.getElementById('loginGate').classList.add('hide');
   document.getElementById('loginerr').textContent='';
   document.getElementById('pw').value='';
