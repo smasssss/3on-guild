@@ -123,8 +123,8 @@
 <section class="page" id="canyon">
   <div class="card">
     <h2>협곡대전 1소대</h2>
-    <div class="sub">목요일 1소대 자료의 투력으로 순위를 표시합니다. 메모는 주차가 바뀌어도 유지됩니다.</div>
-    <div class="canyon-toolbar field"><label for="canyonWeek">목요일 자료</label><select id="canyonWeek"></select></div>
+    <div class="sub">협곡대전 1소대 확인 자료의 투력으로 순위를 표시합니다. 메모는 자료 날짜가 바뀌어도 유지됩니다.</div>
+    <div class="canyon-toolbar field"><label for="canyonWeek">협곡대전 자료</label><select id="canyonWeek"></select></div>
     <div class="notice" id="canyonWarning" hidden></div>
     <div class="notice" id="canyonExample" hidden>예시 데이터 · 기능 검수 전용 · 실제 1소대 자료가 아닙니다.</div>
     <div class="canyon-head canyon-line" aria-hidden="true"><span>순위</span><span>닉네임</span><span>투력</span><span>메모</span></div>
@@ -133,7 +133,7 @@
   </div>
   <details class="card"><summary>1소대 자료 관리</summary>
     <div class="sub">스크린샷에서 확인한 닉네임·투력만 등록합니다. 일반 성장추적 투력은 가져오지 않습니다. 자료 등록과 메모 변경에는 관리자 인증이 필요합니다.</div>
-    <div class="actions"><button class="btn ghost" id="canyonAddWeek">목요일 자료 등록</button><button class="btn ghost" id="canyonExportPower">주차 자료 백업</button><button class="btn ghost" id="canyonExportMemos">메모 백업</button><button class="btn ghost" id="canyonImport">백업 병합</button></div>
+    <div class="actions"><button class="btn ghost" id="canyonAddWeek">협곡대전 명단 등록</button><button class="btn ghost" id="canyonExportPower">명단 자료 백업</button><button class="btn ghost" id="canyonExportMemos">메모 백업</button><button class="btn ghost" id="canyonImport">백업 병합</button></div>
     <div class="actions"><button class="smallbtn" id="canyonRestorePower">직전 주차 자료 복구</button><button class="smallbtn" id="canyonRestoreMemos">직전 메모 복구</button></div>
     <div class="sub">변경 전 자료는 자동 백업합니다. 기존 마차/VIP 저장자료는 변경하지 않습니다.</div>
   </details>
@@ -143,8 +143,8 @@
   <div class="sub">빈 내용으로 확인하면 메모를 삭제합니다.</div><div class="login-actions"><button class="btn ghost" id="canyonMemoCancel">취소</button><button class="btn primary" id="canyonMemoSave">확인</button></div>
 </div></div>
 <div id="canyonDataModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="canyonDataTitle"><div class="modal-card">
-  <h3 id="canyonDataTitle">목요일 자료 등록</h3>
-  <div id="canyonWeekFields" class="field" style="margin-top:12px"><label for="canyonDate">자료 날짜 · 목요일</label><input id="canyonDate" type="date"><label for="canyonPowerInput">한 줄에 닉네임 | 투력</label><textarea id="canyonPowerInput" rows="8" placeholder="스크린샷에서 확인한 자료를 입력하세요"></textarea><div class="sub">투력의 쉼표는 허용합니다. 닉네임은 확인된 변경정보만 연결하며, 미등록 닉네임은 별도 인물로 보존합니다.</div></div>
+  <h3 id="canyonDataTitle">협곡대전 명단 등록</h3>
+  <div id="canyonWeekFields" class="field" style="margin-top:12px"><label for="canyonDate">명단 기준일</label><input id="canyonDate" type="date"><label for="canyonPowerInput">한 줄에 닉네임 | 투력</label><textarea id="canyonPowerInput" rows="8" placeholder="스크린샷에서 확인한 자료를 입력하세요"></textarea><div class="sub">투력의 쉼표는 허용합니다. 닉네임은 확인된 변경정보만 연결하며, 미등록 닉네임은 별도 인물로 보존합니다.</div></div>
   <div id="canyonBackupFields" class="field" style="margin-top:12px" hidden><label for="canyonRestoreMode">복구 방식</label><select id="canyonRestoreMode"><option value="merge">병합 · 기존 자료 보존</option><option value="replace">전체 복구 · 이 백업의 해당 자료로 교체</option></select><label for="canyonBackupInput">백업 JSON 내용을 붙여 넣으세요</label><textarea id="canyonBackupInput" rows="10"></textarea><div class="sub">병합은 기존 주차와 충돌하면 저장하지 않습니다. 메모는 더 최근 수정본만 적용합니다. 전체 복구는 주차 또는 메모 중 선택한 백업 종류만 교체하며 변경 전 자료를 자동 백업합니다.</div></div>
   <div class="login-actions"><button class="btn ghost" id="canyonDataCancel">취소</button><button class="btn primary" id="canyonDataSave">확인</button></div>
 </div></div>
@@ -671,14 +671,18 @@ function canyonIdentity(nickname){
   if(!known&&!Object.prototype.hasOwnProperty.call(VERIFIED_IDENTITIES,nick)){const confirmed=new Set(CANYON_POWER_SEED.weeks.flatMap(w=>w.members).filter(m=>m.nickname===nick).map(m=>m.id));if(confirmed.size===1)return [...confirmed][0];}
   return (known||Object.prototype.hasOwnProperty.call(VERIFIED_IDENTITIES,nick)?'guild:':'unverified:')+canonical;
 }
-function canyonValidDate(date){return /^\d{4}-\d{2}-\d{2}$/.test(date)&&iso(parseISO(date))===date&&parseISO(date).getDay()===4;}
+function canyonValidDate(date){
+  if(typeof date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;
+  const parsed=new Date(date+'T00:00:00Z');
+  return Number.isFinite(parsed.getTime())&&parsed.toISOString().slice(0,10)===date;
+}
 function canyonValidate(kind,data){
   if(!data||data.version!==1)throw Error('지원하지 않는 자료 형식입니다.');
   if(kind==='power'){
-    if(!Array.isArray(data.weeks)||data.weeks.length>2000)throw Error('주차 자료를 확인하세요.');
+    if(!Array.isArray(data.weeks)||data.weeks.length>2000)throw Error('날짜별 명단 자료를 확인하세요.');
     const dates=new Set();
     for(const week of data.weeks){
-      if(!canyonValidDate(week.date)||dates.has(week.date)||!Array.isArray(week.members)||week.members.length>500)throw Error('목요일 날짜 또는 중복 주차를 확인하세요.');
+      if(!canyonValidDate(week.date)||dates.has(week.date)||!Array.isArray(week.members)||week.members.length>500)throw Error('자료 기준일·날짜 중복 또는 명단 형식을 확인하세요.');
       if(week.isExample!==undefined&&typeof week.isExample!=='boolean')throw Error('예시 자료 표시를 확인하세요.');
       dates.add(week.date);const ids=new Set();
       for(const m of week.members){
@@ -719,12 +723,12 @@ function canyonDelta(date,id){
 function renderCanyon(){
   const weeks=canyonStores.power.data.weeks,select=document.getElementById('canyonWeek');
   if(!weeks.some(w=>w.date===canyonSelectedDate))canyonSelectedDate=weeks[0]?.date||'';
-  select.innerHTML=weeks.length?weeks.map(w=>`<option value="${w.date}">${w.date} · ${w.members.length}명</option>`).join(''):'<option value="">등록된 목요일 자료 없음</option>';
+  select.innerHTML=weeks.length?weeks.map(w=>`<option value="${w.date}">${w.date} · ${w.members.length}명</option>`).join(''):'<option value="">등록된 협곡대전 자료 없음</option>';
   select.value=canyonSelectedDate;select.disabled=!weeks.length;
   const errors=Object.values(canyonStores).map(s=>s.error).filter(Boolean),warning=document.getElementById('canyonWarning');warning.hidden=!errors.length;warning.textContent=errors.join('\n');
   const week=weeks.find(w=>w.date===canyonSelectedDate),rows=document.getElementById('canyonRows');
   document.getElementById('canyonExample').hidden=!week?.isExample;
-  if(!week?.members.length){rows.innerHTML='<div class="canyon-empty">아직 등록된 1소대 자료가 없습니다.<br>목요일 스크린샷을 제공하면 해당 날짜의 명단과 투력을 반영합니다.</div>';return;}
+  if(!week?.members.length){rows.innerHTML='<div class="canyon-empty">아직 등록된 1소대 자료가 없습니다.<br>명단 확인일을 기준으로 자료를 등록하면 해당 날짜의 명단과 투력을 반영합니다.</div>';return;}
   rows.innerHTML=week.members.map((m,i)=>{
     const memo=canyonMemo(m.id),color=['canyon-gold','canyon-silver','canyon-bronze'][i]||'';
     return `<article class="canyon-entry"><div class="canyon-line"><span class="canyon-rank ${color}">${i<3?'<span class="medal">'+['🥇','🥈','🥉'][i]+' </span>':''}${m.rank}위</span><span class="canyon-name">${escapeLabel(canyonDisplay(m))}</span><span class="canyon-power">${m.power.toLocaleString('ko-KR')}</span><button class="smallbtn" data-canyon-memo="${i}" aria-label="${escapeLabel(canyonDisplay(m))} 메모">메모</button></div>${memo?`<div class="canyon-memo"><b>메모:</b> ${escapeLabel(memo)}</div>`:''}</article>`;
@@ -741,20 +745,20 @@ function canyonOpenMemo(member){
   canyonOpenModal('canyonMemoModal');document.getElementById('canyonMemoInput').focus();
 }
 function canyonParseRows(date,text){
-  if(!canyonValidDate(date))throw Error('실제 목요일 날짜를 선택해 주세요.');
+  if(!canyonValidDate(date))throw Error('실제 협곡대전 명단 기준일을 선택해 주세요.');
   const lines=text.split(/\r?\n/).filter(x=>x.trim());if(!lines.length)throw Error('확인한 닉네임과 투력을 입력해 주세요.');
   const members=lines.map((line,i)=>{
     const parts=line.split(/\s*\|\s*|\t/);if(parts.length!==2)throw Error((i+1)+'번째 줄을 닉네임 | 투력 형식으로 입력하세요.');
     const nickname=parts[0].trim(),number=parts[1].trim();if(!/^(\d+|\d{1,3}(,\d{3})+)$/.test(number))throw Error((i+1)+'번째 줄 투력은 정수로 입력하세요.');
     return {id:canyonIdentity(nickname),nickname,power:Number(number.replaceAll(',',''))};
   });
-  return canyonValidate('power',{version:1,weeks:[{date,members,updatedAt:new Date().toISOString(),source:'목요일 1소대 확인 자료'}]}).weeks[0];
+  return canyonValidate('power',{version:1,weeks:[{date,members,updatedAt:new Date().toISOString(),source:'협곡대전 1소대 확인 자료'}]}).weeks[0];
 }
 function canyonMerge(kind,incoming){
   const next=JSON.parse(JSON.stringify(canyonStores[kind].data));canyonValidate(kind,incoming);
   if(kind==='power')for(const w of incoming.weeks){
     const old=next.weeks.find(x=>x.date===w.date);
-    if(old&&JSON.stringify(old.members)!==JSON.stringify(w.members))throw Error(w.date+' 주차가 기존 자료와 다릅니다. 기존 자료를 보존했습니다. 수정이 필요하면 목요일 자료 등록에서 확인하세요.');
+    if(old&&JSON.stringify(old.members)!==JSON.stringify(w.members))throw Error(w.date+' 날짜의 명단이 기존 자료와 다릅니다. 기존 자료를 보존했습니다. 수정이 필요하면 협곡대전 명단 등록에서 확인하세요.');
     if(!old)next.weeks.push(w);
   }else for(const [id,m] of Object.entries(incoming.members)){
     const old=next.members[id];
@@ -772,7 +776,7 @@ async function canyonRestoreLocal(kind){
     const backup=JSON.parse(localStorage.getItem(CANYON_KEYS[kind]+'_backup')||'null');
     if(!backup||backup.format!=='3on-canyon-raw-v1'||backup.kind!==kind)throw Error('직전 자동 백업이 없습니다.');
     const candidate=backup.raw===null?(kind==='power'?{version:1,weeks:[]}:{version:1,members:{}}):JSON.parse(backup.raw);canyonValidate(kind,candidate);
-    if(!await askConfirm((kind==='power'?'주차 자료':'메모')+'를 '+backup.savedAt+' 변경 직전 상태로 복구할까요? 현재 자료도 자동 백업됩니다.'))return;
+    if(!await askConfirm((kind==='power'?'명단 자료':'메모')+'를 '+backup.savedAt+' 변경 직전 상태로 복구할까요? 현재 자료도 자동 백업됩니다.'))return;
     if(!adminOK())return;await canyonWrite(kind,candidate);canyonSelectedDate='';renderCanyon();showNotice('직전 자료로 복구했습니다.');
   }catch(e){showNotice(e.message);}
 }
@@ -785,7 +789,7 @@ function bindCanyon(){
     if(!adminOK()||!canyonMemoMember)return;
     try{const next=JSON.parse(JSON.stringify(canyonStores.memos.data));next.members[canyonMemoMember.id]={text:document.getElementById('canyonMemoInput').value.trim(),updatedAt:new Date().toISOString()};await canyonWrite('memos',next);canyonCloseModal('canyonMemoModal');renderCanyon();showNotice('메모를 저장했습니다.');}catch(e){showNotice(e.message);}
   };
-  function openData(mode){canyonDataMode=mode;document.getElementById('canyonDataTitle').textContent=mode==='week'?'목요일 자료 등록':'협곡대전 백업 병합';document.getElementById('canyonWeekFields').hidden=mode!=='week';document.getElementById('canyonBackupFields').hidden=mode==='week';document.getElementById('canyonDate').value=canyonSelectedDate;document.getElementById('canyonPowerInput').value='';document.getElementById('canyonBackupInput').value='';document.getElementById('canyonRestoreMode').value='merge';canyonOpenModal('canyonDataModal');}
+  function openData(mode){canyonDataMode=mode;document.getElementById('canyonDataTitle').textContent=mode==='week'?'협곡대전 명단 등록':'협곡대전 백업 병합';document.getElementById('canyonWeekFields').hidden=mode!=='week';document.getElementById('canyonBackupFields').hidden=mode==='week';document.getElementById('canyonDate').value=canyonSelectedDate;document.getElementById('canyonPowerInput').value='';document.getElementById('canyonBackupInput').value='';document.getElementById('canyonRestoreMode').value='merge';canyonOpenModal('canyonDataModal');}
   document.getElementById('canyonAddWeek').onclick=()=>canyonRequireAdmin(()=>openData('week'));
   document.getElementById('canyonImport').onclick=()=>canyonRequireAdmin(()=>openData('backup'));
   document.getElementById('canyonDataCancel').onclick=()=>canyonCloseModal('canyonDataModal');
@@ -796,13 +800,13 @@ function bindCanyon(){
       if(canyonDataMode==='week'){
         const week=canyonParseRows(document.getElementById('canyonDate').value,document.getElementById('canyonPowerInput').value);date=week.date;kind='power';
         next=JSON.parse(JSON.stringify(canyonStores.power.data));const old=next.weeks.find(w=>w.date===date);
-        if(!await askConfirm(date+' · '+week.members.length+'명의 확인 자료를 저장할까요?'+(old?' 이 날짜의 기존 투력을 수정하며 변경 전 자료는 자동 백업합니다.':' 과거 주차와 메모는 유지됩니다.')))return;
+        if(!await askConfirm(date+' · '+week.members.length+'명의 확인 자료를 저장할까요?'+(old?' 이 날짜의 기존 투력을 수정하며 변경 전 자료는 자동 백업합니다.':' 과거 날짜의 자료와 메모는 유지됩니다.')))return;
         next.weeks=next.weeks.filter(w=>w.date!==date);next.weeks.push(week);
       }else{
         const backup=JSON.parse(document.getElementById('canyonBackupInput').value);
         if(backup.format!=='3on-canyon-backup-v1'||!['power','memos'].includes(backup.kind))throw Error('협곡대전 백업 JSON을 입력해 주세요.');
         kind=backup.kind;const replace=document.getElementById('canyonRestoreMode').value==='replace';next=replace?canyonValidate(kind,backup.data):canyonMerge(kind,backup.data);
-        if(!await askConfirm(replace?'전체 복구: 현재 '+(kind==='power'?'협곡 주차 자료':'협곡 메모')+'를 이 백업으로 교체할까요? 백업에 없는 해당 자료는 현재 화면에서 제외됩니다. 변경 전 원본은 자동 백업합니다.':'백업을 병합할까요? 기존 주차는 보존하고 메모는 더 최근 수정본을 적용합니다. 변경 전 자료는 자동 백업합니다.'))return;
+        if(!await askConfirm(replace?'전체 복구: 현재 '+(kind==='power'?'협곡 명단 자료':'협곡 메모')+'를 이 백업으로 교체할까요? 백업에 없는 해당 자료는 현재 화면에서 제외됩니다. 변경 전 원본은 자동 백업합니다.':'백업을 병합할까요? 기존 날짜의 명단은 보존하고 메모는 더 최근 수정본을 적용합니다. 변경 전 자료는 자동 백업합니다.'))return;
         if(replace&&!await askConfirm('정말 해당 자료 전체를 백업 상태로 복구하시겠습니까? 마차/VIP와 다른 종류의 협곡 자료는 유지됩니다.'))return;
       }
       if(!adminOK())return;await canyonWrite(kind,next);canyonSelectedDate=date;canyonCloseModal('canyonDataModal');renderCanyon();showNotice('협곡대전 자료를 저장했습니다.');
@@ -880,7 +884,7 @@ async function canyonRestore(kind){
     if(!adminOK())throw Error('관리자 비밀번호를 먼저 인증해 주세요.');
     const r=await sharedRequest('/api/backups?kind='+kind),b=r.backups[0];
     if(!b)return canyonRestoreLocal(kind);
-    if(!await askConfirm((kind==='power'?'협곡 주차 자료':'협곡 메모')+'를 '+b.savedAt+' 변경 직전 DB 자료로 복구할까요? 현재 자료도 DB에 자동 백업합니다.'))return;
+    if(!await askConfirm((kind==='power'?'협곡 명단 자료':'협곡 메모')+'를 '+b.savedAt+' 변경 직전 DB 자료로 복구할까요? 현재 자료도 DB에 자동 백업합니다.'))return;
     await sharedWrite(kind,b.data);canyonSelectedDate='';renderCanyon();showNotice('직전 DB 자료로 복구했습니다.');
   }catch(e){showNotice(e.message);}
 }
